@@ -1,0 +1,57 @@
+.divCity{
+    display: flex;
+    flex-direction: column;
+    height: 900px;
+}
+
+div{
+    margin: 2%;
+    height: max-content;
+    border: 5px solid black;
+}
+
+h1{
+    text-align: center;
+}
+h2{
+    text-align: center;
+    width: 100%;
+}
+
+.divContent{
+    display: flex;
+    flex-direction: row;
+    height: 80%;
+    
+}
+
+.divMenu{
+
+}
+
+.divParks{
+    height: 80%;
+}
+
+.divPark{
+
+}
+
+.labAddRemove{
+    width: 100%;
+    text-align: center;
+}
+
+
+  .btnRemove{
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+
