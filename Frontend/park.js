@@ -3,15 +3,14 @@ export class Park{
 
     inventoryItems = ['bin','lamp','bench','dogpark','playground']; 
 
-    constructor(id, name, sqMeters, greenArea)
+    constructor(namePark, sqMeters, greenArea)
     {
-        this.id = id;
-        this.name = name;
+        this.namePark = namePark;
         this.sqMeters = sqMeters;
         this.greenArea = greenArea;
         this.inventoryList = [];
         //this.container = null;
-        this.containerContent = null;
+        //this.containerInvs = null;
     }
 
     isInList(name)
@@ -161,17 +160,16 @@ export class Park{
             const name = nameIt.value;
             console.log("Item name and amount: " + name, amount);
 
-            let item = new InventoryItem(this.id, name, amount);
+            let item = new InventoryItem(name, amount);
             this.updateItem(item);
-
-            console.log("Host child list length: " + host.childNodes[2]);
             
             let child = document.querySelector(".divInventories");
             let child2 = document.querySelector(".divMenuItem");
             console.log("Child 2: " + child2);
-            host.removeChild(child); //debug
+            host.removeChild(child);
             this.drawParkInventory(host);
-            host.removeChild(child2); //debug
+
+            host.removeChild(child2);
             this.drawMenu(host);
         }
 
@@ -187,7 +185,7 @@ export class Park{
         //park Name
         let h = document.createElement("h2");
         h.className = "header2";
-        h.innerHTML = this.name;
+        h.innerHTML = this.namePark;
         divPark.appendChild(h);
 
         //extras (is dog friendly is kidsfriendly)
@@ -200,13 +198,12 @@ export class Park{
         let divContent = document.createElement("div");
         divContent.className = "divContent";
         divContent.innerHTML = "div Content - Park";
-        this.containerContent = divContent;
         divPark.appendChild(divContent);
 
         //park inventory
-        this.drawParkInventory(this.containerContent);
+        this.drawParkInventory(divContent);
 
         //edit menu
-        this.drawMenu(this.containerContent);
+        this.drawMenu(divContent);
     }
 }

@@ -1,8 +1,7 @@
 export class InventoryItem{
 
-    constructor(id, name, amount)
+    constructor(name, amount)
     {
-        this.id = id;
         this.name = name;
         this.amount = amount;
         this.img = null;

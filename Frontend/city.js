@@ -2,15 +2,15 @@ import { Park } from "./park.js";
 
 export class City{
 
-    constructor(id, name, year)
+    constructor(nameCity, year)
     {
-        this.id = id;
-        this.name = name;
+        this.name = nameCity;
         this.year = year;
 
         this.parkList = [];
 
-        //this.container = null;
+        this.container = null;
+        this.containerParks = null;
     }
 
     isInList(parkName)
@@ -26,7 +26,7 @@ export class City{
     {
         for (let i=0; i< this.parkList.length; i++)
         {
-            if (this.parkList[i].name == parkName)
+            if (this.parkList[i].namePark == parkName)
             {
                 console.log("Ret Index ind: " + i);
                 return i;
@@ -39,7 +39,7 @@ export class City{
     {
         //let check = this.isInList(park);
         //if (!check)
-        let ind = this.retIndex(park.name);
+        let ind = this.retIndex(park.namePark);
         console.log("index: " + ind);
         if (ind < 0)
             this.parkList.push(park);
@@ -105,7 +105,7 @@ export class City{
             const greenArea = document.querySelector(".area").value;
 
             console.log(name, area, greenArea);
-            let p = new Park(this.id, name, area, greenArea);
+            let p = new Park(name,area,greenArea);
             this.addPark(p);
             console.log(this.parkList[0]);
             console.log(this.parkList[1]);
@@ -144,6 +144,7 @@ export class City{
         let divParks = document.createElement("div");
         divParks.className = "divParks";
         divParks.innerHTML = "div Parks ";
+        this.containerParks = divParks;
         host.appendChild(divParks);
 
         this.parkList.forEach(park => {
@@ -155,6 +156,7 @@ export class City{
         //main div
         let divCity = document.createElement("div");
         divCity.className = "divCity";
+        this.container = divCity;
         host.appendChild(divCity);
 
         //heading 
@@ -170,7 +172,7 @@ export class City{
         divCity.appendChild(divContent);
 
         //search = show only dog friendly parks
-        
+
         //search = show only kids friendly parks
 
 
