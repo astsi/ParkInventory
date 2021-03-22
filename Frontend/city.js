@@ -2,10 +2,10 @@ import { Park } from "./park.js";
 
 export class City{
 
-    constructor(id, nameCity, year)
+    constructor(id, name, year)
     {
         this.id = id;
-        this.nameCity = nameCity;
+        this.name = name;
         this.year = year;
 
         this.parkList = [];
@@ -26,7 +26,7 @@ export class City{
     {
         for (let i=0; i< this.parkList.length; i++)
         {
-            if (this.parkList[i].namePark == parkName)
+            if (this.parkList[i].name == parkName)
             {
                 console.log("Ret Index ind: " + i);
                 return i;
@@ -39,7 +39,7 @@ export class City{
     {
         //let check = this.isInList(park);
         //if (!check)
-        let ind = this.retIndex(park.namePark);
+        let ind = this.retIndex(park.name);
         console.log("index: " + ind);
         if (ind < 0)
             this.parkList.push(park);
@@ -160,7 +160,7 @@ export class City{
         //heading 
         let h = document.createElement("h1");
         h.className = "heading";
-        h.innerHTML = "Grad " + this.nameCity + " " + this.year; 
+        h.innerHTML = "Grad " + this.name + " " + this.year; 
         divCity.appendChild(h);
 
         //content of the div
@@ -170,7 +170,7 @@ export class City{
         divCity.appendChild(divContent);
 
         //search = show only dog friendly parks
-
+        
         //search = show only kids friendly parks
 
 

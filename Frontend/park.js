@@ -3,10 +3,10 @@ export class Park{
 
     inventoryItems = ['bin','lamp','bench','dogpark','playground']; 
 
-    constructor(id, namePark, sqMeters, greenArea)
+    constructor(id, name, sqMeters, greenArea)
     {
         this.id = id;
-        this.namePark = namePark;
+        this.name = name;
         this.sqMeters = sqMeters;
         this.greenArea = greenArea;
         this.inventoryList = [];
@@ -187,7 +187,7 @@ export class Park{
         //park Name
         let h = document.createElement("h2");
         h.className = "header2";
-        h.innerHTML = this.namePark;
+        h.innerHTML = this.name;
         divPark.appendChild(h);
 
         //extras (is dog friendly is kidsfriendly)
