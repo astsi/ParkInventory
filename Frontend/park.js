@@ -11,7 +11,7 @@ export class Park{
         this.greenArea = greenArea;
         this.inventoryList = [];
         //this.container = null;
-        //this.containerInvs = null;
+        this.containerContent = null;
     }
 
     isInList(name)
@@ -161,16 +161,17 @@ export class Park{
             const name = nameIt.value;
             console.log("Item name and amount: " + name, amount);
 
-            let item = new InventoryItem(name, amount);
+            let item = new InventoryItem(this.id, name, amount);
             this.updateItem(item);
+
+            console.log("Host child list length: " + host.childNodes[2]);
             
             let child = document.querySelector(".divInventories");
             let child2 = document.querySelector(".divMenuItem");
             console.log("Child 2: " + child2);
-            host.removeChild(child);
+            host.removeChild(child); //debug
             this.drawParkInventory(host);
-
-            host.removeChild(child2);
+            host.removeChild(child2); //debug
             this.drawMenu(host);
         }
 
@@ -199,12 +200,13 @@ export class Park{
         let divContent = document.createElement("div");
         divContent.className = "divContent";
         divContent.innerHTML = "div Content - Park";
+        this.containerContent = divContent;
         divPark.appendChild(divContent);
 
         //park inventory
-        this.drawParkInventory(divContent);
+        this.drawParkInventory(this.containerContent);
 
         //edit menu
-        this.drawMenu(divContent);
+        this.drawMenu(this.containerContent);
     }
 }

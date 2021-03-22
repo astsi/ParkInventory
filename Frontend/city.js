@@ -105,7 +105,7 @@ export class City{
             const greenArea = document.querySelector(".area").value;
 
             console.log(name, area, greenArea);
-            let p = new Park(name,area,greenArea);
+            let p = new Park(this.id, name, area, greenArea);
             this.addPark(p);
             console.log(this.parkList[0]);
             console.log(this.parkList[1]);
