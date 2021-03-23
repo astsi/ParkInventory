@@ -3,14 +3,38 @@ export class Park{
 
     inventoryItems = ['bin','lamp','bench','dogpark','playground']; 
 
-    constructor(namePark, sqMeters, greenArea)
+    constructor(id, namePark, sqMeters, greenArea)
     {
+        this.id = id;
         this.namePark = namePark;
         this.sqMeters = sqMeters;
         this.greenArea = greenArea;
         this.inventoryList = [];
-        //this.container = null;
-        //this.containerInvs = null;
+        this.container = null;
+        this.containerInventory = null;
+    }
+
+    greenPercentage()
+    {
+        if (this.sqMeters < this.greenArea)
+        return 0;
+        else return Math.round(this.greenArea / this.sqMeters * 100);
+    }
+
+    isDogFriendly()
+    {
+        let result = this.inventoryList.some(el => el.name === "dogpark");
+        if (result) return true;
+        else return false;
+
+    }
+    
+    isKidsFriendly()
+    {
+        let result = this.inventoryList.some(el => el.name === "playground");
+        if (result) return true;
+        else return false;
+        
     }
 
     isInList(name)
@@ -55,16 +79,16 @@ export class Park{
     }
 
     updateItem(item)
-    {
+    { console.log("Usao u updateItem");
         if (item.amount > 0)
-        {
+        { console.log("Usao u prvi if");
             let ind = this.retIndex(item.name);
             if (ind > -1)
-            {
+            {console.log("Usao u 2. if");
                 this.inventoryList[ind].amount = parseInt(item.amount);
             }
             else
-            {
+            {console.log("Usao u else");
                 this.addItem(item);
     
             }
@@ -76,22 +100,54 @@ export class Park{
     {
         let divExtras = document.createElement("div");
         divExtras.className = "divExtras";
-        divExtras.innerHTML = "div Extras";
+        divExtras.innerHTML = "divExtras ";
         host.appendChild(divExtras);
+
+        if (this.isKidsFriendly())
+        {
+            let labKids = document.createElement("label");
+            labKids.innerHTML = "This park contains entertainment for the children.\n ";
+            divExtras.appendChild(labKids);
+        }
+        if (this.isDogFriendly())
+        {
+            let labDogs = document.createElement("label");
+            labDogs.innerHTML = "Dog Friendly park!";
+            divExtras.appendChild(labDogs);
+
+        }
+
         // if child/dog - friendly create label that says so
     }
 
     drawAreaBar(host){
-        let divBar = document.createElement("div");
-        divBar.className = "divBar";
-        divBar.innerHTML = "div Bar";
+
+        let divBar = document.createElement("dl");
+        divBar.className = "dl";
         host.appendChild(divBar);
+
+        let dt = document.createElement("dt");
+        divBar.className = "dt";
+        dt.innerHTML = "Green area";
+        divBar.appendChild(dt);
+
+        let dd = document.createElement("dd");
+        dd.class = "percentage";
+        dd.style.width = this.greenPercentage();
+        dt.appendChild(dd);
+
+        let span = document.createElement("span");
+        span.className = "text";
+        span.innerHTML = this.greenPercentage() + "% : ";
+        dd.appendChild(span);
+
     }
 
     drawParkInventory(host){
         let inventory = document.createElement("div");
         inventory.className = "divInventories";
         inventory.innerHTML = "Inventory list";
+        this.containerInventory = inventory;
         host.appendChild(inventory);
 
         //console.log("Length: " + this.inventoryList.length);
@@ -121,6 +177,9 @@ export class Park{
     }
 
     drawMenu(host){
+
+        console.log("DrawMenu host: " + host);
+        console.log(host);
         let divMenu = document.createElement("div");
         divMenu.className = "divMenuItem";
         divMenu.innerHTML = "div Menu";
@@ -148,7 +207,7 @@ export class Park{
             nameIt.appendChild(option);
         });
         
-        this.drawBlock("Amount", "countItema", divMenu);
+        this.drawBlock("Amount", "countItem", divMenu);
 
         let buttonUpdate = document.createElement("button");
         buttonUpdate.className = "button";
@@ -156,16 +215,20 @@ export class Park{
         divMenu.appendChild(buttonUpdate);
         buttonUpdate.onclick = ev =>{
             //const name = document.querySelector(".nameItem").value;
-            const amount = document.querySelector(".countItema").value;
+            const amount = host.querySelector(".countItem").value;
             const name = nameIt.value;
-            console.log("Item name and amount: " + name, amount);
+            console.log("Item name and amount: " + name + " " + amount);
 
             let item = new InventoryItem(name, amount);
             this.updateItem(item);
             
-            let child = document.querySelector(".divInventories");
-            let child2 = document.querySelector(".divMenuItem");
-            console.log("Child 2: " + child2);
+            let child = host.querySelector(".divInventories");
+            let child2 = host.querySelector(".divMenuItem");
+            let extras = this.container.querySelector(".divExtras");
+
+            this.container.removeChild(extras);
+            this.drawExtras(this.container);
+
             host.removeChild(child);
             this.drawParkInventory(host);
 
@@ -180,6 +243,7 @@ export class Park{
         let divPark = document.createElement("div");
         divPark.className = "divPark";
         divPark.innerHTML = "div Park";
+        this.container = divPark;
         host.appendChild(divPark);
 
         //park Name

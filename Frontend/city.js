@@ -2,8 +2,9 @@ import { Park } from "./park.js";
 
 export class City{
 
-    constructor(nameCity, year)
+    constructor(id, nameCity, year)
     {
+        this.id = id;
         this.name = nameCity;
         this.year = year;
 
@@ -104,12 +105,9 @@ export class City{
             const area =  document.querySelector(".size").value;
             const greenArea = document.querySelector(".area").value;
 
-            console.log(name, area, greenArea);
+            //ovde!!!
             let p = new Park(name,area,greenArea);
             this.addPark(p);
-            console.log(this.parkList[0]);
-            console.log(this.parkList[1]);
-            console.log(this.parkList[2]);
             
             let child = document.querySelector(".divParks");
             host.removeChild(child)
@@ -151,6 +149,85 @@ export class City{
             park.drawPark(divParks);
         });
     }
+
+    /*
+    sortByName(){
+
+    }
+
+    sortByGreen(){
+
+    }
+
+    showDogParksOnly(){
+
+    }
+
+    showKidsParksOnly(){
+
+    }
+
+    drawRadioButton(name,value, host){
+        let input = document.createElement("input");
+        input.type = "radio";
+        input.className = "radio";
+        input.value = "radio";
+        input.name = value;
+        host.appendChild(input);
+
+        let label = document.createElement("label");
+        label.className = "inputLabel";
+        label.innerHTML = name;
+        host.appendChild(label);
+    }
+    
+    drawSort(host){
+        let divSort = document.createElement("div");
+        divSort.className = "divSort";
+        divSort.innerHTML = "divSort";
+        host.appendChild(divSort);
+
+        this.drawRadioButton("Sort by name ","name", divSort);
+        this.drawRadioButton("Sort by green area ", "green", divSort);
+        this.drawRadioButton("Show only dog parks ", "dogs", divSort);
+        this.drawRadioButton("Show parks recommended for kids ","kids", divSort);
+
+        let button = document.createElement("button");
+        button.className = "button";
+        button.type = "submit";
+        button.innerHTML = "Sort";
+        button.appendChild(button);
+        button.onclick = ev => {
+            let par = document.querySelectorAll(".RadioButton");
+
+
+            par.forEach(el => {
+
+                if(el.checked == true && value =="name")
+                {
+                    this.sortByName();
+                    console.log("Sort name");
+                }
+                else if(el.checked == true && value =="green")
+                {
+                    this.sortByGreen();
+                }
+                else if(el.checked == true && value =="dogs")
+                {
+                    this.sortByDogs();
+                }
+                else if(el.checked == true && value =="kids")
+                {
+                    this.sortByKids();
+                }
+                    
+                
+            });
+        }
+    }
+
+    */
+
     draw(host)
     {
         //main div
@@ -179,9 +256,13 @@ export class City{
         //menu
         this.drawMenu(divContent);
 
-        //parks
+        //sort
+        //this.drawSort(divContent);
+
+        //park
         this.drawParks(divContent);
 
 
     }
 }
+

@@ -1,10 +1,11 @@
 export class InventoryItem{
 
-    constructor(name, amount)
+    constructor(id, name, amount, img)
     {
+        this.id = id;
         this.name = name;
         this.amount = amount;
-        this.img = null;
+        this.img = img;
 
         if (amount < 0 || amount === "undefined" || amount === null)
             amount = 1;
@@ -30,6 +31,8 @@ export class InventoryItem{
         let divInv = document.createElement("div");
         divInv.className = "divItem";
         //divInv.innerHTML = "div Item";
+
+        console.log(host);
         host.appendChild(divInv);
 
         //itemImage
