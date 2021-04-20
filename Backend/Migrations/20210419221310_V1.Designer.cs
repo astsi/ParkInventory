@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(ParkInventoryContext))]
-    [Migration("20210322203127_V1")]
+    [Migration("20210419221310_V1")]
     partial class V1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,14 +29,14 @@ namespace Backend.Migrations
                         .HasColumnName("ID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("name")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasColumnName("Name");
+                    b.Property<string>("date")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Date");
 
-                    b.Property<int>("year")
-                        .HasColumnType("int")
-                        .HasColumnName("Year");
+                    b.Property<string>("name")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("Name");
 
                     b.HasKey("id");
 
@@ -51,13 +51,17 @@ namespace Backend.Migrations
                         .HasColumnName("ID")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("amount")
-                        .HasColumnType("int")
-                        .HasColumnName("Amount");
+                    b.Property<string>("description")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Description");
 
-                    b.Property<int>("name")
-                        .HasColumnType("int")
+                    b.Property<string>("name")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("Name");
+
+                    b.Property<int>("num")
+                        .HasColumnType("int")
+                        .HasColumnName("Num");
 
                     b.Property<int?>("parkID")
                         .HasColumnType("int");
@@ -84,13 +88,13 @@ namespace Backend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("GreenArea");
 
+                    b.Property<string>("location")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Location");
+
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Name");
-
-                    b.Property<int>("sqMeters")
-                        .HasColumnType("int")
-                        .HasColumnName("SqMeters");
 
                     b.HasKey("ID");
 

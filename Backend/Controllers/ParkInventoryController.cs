@@ -30,16 +30,33 @@ namespace Backend.Controllers
         
         [Route("AddCity")]
         [HttpPost]
-        public async Task AddCity([FromBody] City city)
+        public async Task<IActionResult> AddCity([FromBody] City city)
         {
-            Context.Cities.Add(city);
-            await Context.SaveChangesAsync();
+            if (city.name != "")
+            {
+                DateTime date = DateTime.Now;
+                string dateString = date.ToString();
+                city.date = dateString;
+
+                Context.Cities.Add(city);
+                await Context.SaveChangesAsync();
+                return Ok(city.id);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
 
         [Route("UpdateCity")]
         [HttpPut]
         public async Task UpdateCity([FromBody] City city)
         {
+            DateTime date = DateTime.Now;
+            string dateString = date.ToString();
+            city.date = dateString;
+            
             Context.Update<City>(city);
             await Context.SaveChangesAsync();
         }
@@ -67,12 +84,22 @@ namespace Backend.Controllers
 
         [Route("AddPark/{idCity}")]
         [HttpPost]
-        public async Task InsertPark([FromBody] Park park, int idCity)
+        public async Task<IActionResult> InsertPark([FromBody] Park park, int idCity)
         {
             var city = await Context.Cities.FindAsync(idCity);
             park.city = city;
-            Context.Parks.Add(park);
-            await Context.SaveChangesAsync();
+
+            if (park.name == "" || park.location == "" || park.greenArea < 0)
+            {
+                return StatusCode(406);   
+            }
+            else
+            {
+                Context.Parks.Add(park);
+                await Context.SaveChangesAsync();
+                return Ok(park.ID);
+            }
+
         }
 
         [Route("DeletePark/{id}")]
@@ -80,7 +107,7 @@ namespace Backend.Controllers
 
         public async Task DeletePark(int id)
         {
-            var park = await Context.Parks.FindAsync(id);
+            var park = Context.Parks.Include(c => c.inventoryList).Where(c => c.ID==id).FirstOrDefault();
             Context.Remove(park);
             await Context.SaveChangesAsync();
         }
@@ -89,32 +116,48 @@ namespace Backend.Controllers
 
 #region Inventory Item
 
+        [Route("GetInventory")]
+        [HttpGet]
+        public async Task<List<InventoryItem>> GetInventory()
+        {
+            return await Context.InventoryItems.ToListAsync();
+        }
+
         [Route("AddInventory/{idPark}")]
         [HttpPost]
-        public async Task InsertInventory([FromBody] InventoryItem item, int idPark)
+        public async Task<IActionResult> InsertInventory([FromBody] InventoryItem item, int idPark)
         {
             var park = await Context.Parks.FindAsync(idPark);
             item.park = park;
-            Context.InventoryItems.Add(item);
-            await Context.SaveChangesAsync();
-        }
 
-        [Route("UpdateInventory")]
-        [HttpPut]
-        public async Task<IActionResult> UpdateInventory([FromBody] InventoryItem item)
-        {
-             if (item.name == "" || item.amount < 1 || item.image == "")
+             if (item.name == "" || item.num < 1 || item.description == "")
             {
                 return StatusCode(406);
             }
-            
-            else 
             {
-            Context.Update<InventoryItem>(item);
-            await Context.SaveChangesAsync();
-            return Ok();
+                Context.InventoryItems.Add(item);
+                await Context.SaveChangesAsync();
+                int parkID = park.ID;
+
+                return Ok(item.ID);
+            }
+        }
+
+        [Route("UpdateInventory")]
+        [HttpPut]   
+        public async Task<IActionResult> UpdateInventory([FromBody] InventoryItem item)
+        {
+             if (item.name == "" || item.num < 1 || item.description == "")
+            {
+                return StatusCode(406);
             }
 
+            else 
+            {
+                Context.Update<InventoryItem>(item);
+                await Context.SaveChangesAsync();
+                return Ok();
+            }
         }
 
         [Route("DeleteInventoryItem/{id}")]

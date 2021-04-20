@@ -15,8 +15,8 @@ namespace Backend.Models
         [Column("Name")]
         public string name { get; set; }
 
-        [Column("SqMeters")]
-        public int sqMeters { get; set; }
+        [Column("Location")]
+        public string location { get; set; }
 
 
         [Column("GreenArea")]
@@ -25,6 +25,7 @@ namespace Backend.Models
         [JsonIgnore]
         [Column("City")]
         public City city {get; set; }
+        
         public virtual List<InventoryItem> inventoryList { get; set; }
 
     }

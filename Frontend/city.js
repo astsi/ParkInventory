@@ -1,268 +1,181 @@
+import { add, createEl, isInList, remove } from "./helperFunctions.js";
+import { InventoryItem } from "./inventoryItem.js";
 import { Park } from "./park.js";
 
-export class City{
+export class City {
+    constructor(id, name, date){
 
-    constructor(id, nameCity, year)
-    {
         this.id = id;
-        this.name = nameCity;
-        this.year = year;
-
+        this.name = name;
+        this.date = date;
         this.parkList = [];
 
         this.container = null;
         this.containerParks = null;
     }
 
-    isInList(parkName)
-    {
-        let result = this.parkList.some(el => el.name === parkName);
-        console.log("Value of park is: " + (result)? "true" : "false");
-
-        if (result) return true;
-        else return false;
+    removeCity(host){
+        host.removeChild(this.container);
     }
 
-    retIndex(parkName)
-    {
-        for (let i=0; i< this.parkList.length; i++)
-        {
-            if (this.parkList[i].namePark == parkName)
-            {
-                console.log("Ret Index ind: " + i);
-                return i;
-            }
+    addPark(park){
+
+        console.log(this.parkList);
+        if (!isInList(park.name,this.parkList)){
+            add(park,this.parkList);
+            park.drawPark(this.containerParks);
         }
-        return -1;
-    }
-
-    addPark(park)
-    {
-        //let check = this.isInList(park);
-        //if (!check)
-        let ind = this.retIndex(park.namePark);
-        console.log("index: " + ind);
-        if (ind < 0)
-            this.parkList.push(park);
-    }
-
-    removePark(parkName)
-    {
-        let ind = this.retIndex(parkName);
-        if (ind > -1)
-        {
-            this.parkList.splice(ind,1);
-        }
-    }
-
-    //Drawing 
-    drawBlock(description, name, host)
-    {
-        let div = document.createElement("div");
-        div.className = "divBlock";
-        host.appendChild(div);
-
-        let lab = document.createElement("lab");
-        lab.className = "lab";
-        lab.innerHTML = description + ": ";
-        div.appendChild(lab);
-
-        let input = document.createElement("input");
-        if (!name.includes("name"))
-        input.type = "number";
-        input.value = name;
-        input.className = name;
-        div.appendChild(input);
-        
-    }
-
-    drawLabel(name, host)
-    {
-        let label = document.createElement("label");
-        label.className = "\blabAddRemove";
-        label.innerHTML = name;
-        host.appendChild(label);
+        else
+            alert("This park already exists!");
     }
 
     drawMenu(host){
-        let divMenu = document.createElement("div");
-        divMenu.className = "divMenu";
-        divMenu.innerHTML ="div menu";
-        host.appendChild(divMenu);
 
-        this.drawLabel("Add Park: ", divMenu);
-        this.drawBlock("Name","name", divMenu);
-        this.drawBlock("Size (in arces)","size", divMenu);
-        this.drawBlock("Green area", "area", divMenu);
+        let menu = createEl("divMenu", "div","",host);
+        menu.style.display = "none";
+        createEl("hEdit","h4","Edit Parks:", menu);        
+        createEl("labParkName", "label","Name of the Park: ", menu);
+        let inputName = createEl("inName", "input","",menu);
+        createEl("labParkLocation", "label","Location of the Park: ", menu);
+        let inputLocation = createEl("inLocation", "input","",menu);
+        createEl("labParkGreenArea", "label","Percentage of green area: ", menu);
+        let inputGreenArea = createEl("inGreenArea", "input","",menu);
 
+        createEl("labDogFriendly", "label", "Dog park ", menu);
+        let inputDogFriendly = createEl("inDogFriendly","input","", menu);
+        inputDogFriendly.type = "checkbox";
 
-        let buttonAdd = document.createElement("button");
-        buttonAdd.className = "btnSubmit";
-        buttonAdd.innerHTML = "Submit Park";
-        divMenu.appendChild(buttonAdd);
-        buttonAdd.onclick = ev => {
-            const name = document.querySelector(".name").value;
-            const area =  document.querySelector(".size").value;
-            const greenArea = document.querySelector(".area").value;
+        createEl("labKidsFriendly", "label", "Entertainment for the children ", menu);
+        let inputKidsFriendly = createEl("inKidsFriendly","input","", menu);
+        inputKidsFriendly.type = "checkbox";
 
-            //ovde!!!
-            let p = new Park(name,area,greenArea);
-            this.addPark(p);
-            
-            let child = document.querySelector(".divParks");
-            host.removeChild(child)
-            this.drawParks(host);
+        let buttons = createEl("buttons","div","",menu);
 
-        }
+        let btnAdd = createEl("btnAdd","button","Add Park",buttons);
+        btnAdd.onclick = ev =>{
 
-        this.drawLabel("Remove Park: ", divMenu);
-        this.drawBlock("Name","nameR", divMenu);
+            let name = inputName.value;
+            let location = inputLocation.value;
+            let area = inputGreenArea.value;
 
-
-
-        let buttonRemove = document.createElement("button");
-        buttonRemove.classname = "btnRemove";
-        buttonRemove.innerHTML = "Remove Park";
-        divMenu.appendChild(buttonRemove);
-        buttonRemove.onclick = ev => {
-            const name = document.querySelector(".nameR").value;
-            
-            this.removePark(name);
-            
-            let child = document.querySelector(".divParks");
-            host.removeChild(child);
-            this.drawParks(host);
-
-        }
-
-    }
-
-    drawParks(host)
-    {
-        let divParks = document.createElement("div");
-        divParks.className = "divParks";
-        divParks.innerHTML = "div Parks ";
-        this.containerParks = divParks;
-        host.appendChild(divParks);
-
-        this.parkList.forEach(park => {
-            park.drawPark(divParks);
-        });
-    }
-
-    /*
-    sortByName(){
-
-    }
-
-    sortByGreen(){
-
-    }
-
-    showDogParksOnly(){
-
-    }
-
-    showKidsParksOnly(){
-
-    }
-
-    drawRadioButton(name,value, host){
-        let input = document.createElement("input");
-        input.type = "radio";
-        input.className = "radio";
-        input.value = "radio";
-        input.name = value;
-        host.appendChild(input);
-
-        let label = document.createElement("label");
-        label.className = "inputLabel";
-        label.innerHTML = name;
-        host.appendChild(label);
-    }
-    
-    drawSort(host){
-        let divSort = document.createElement("div");
-        divSort.className = "divSort";
-        divSort.innerHTML = "divSort";
-        host.appendChild(divSort);
-
-        this.drawRadioButton("Sort by name ","name", divSort);
-        this.drawRadioButton("Sort by green area ", "green", divSort);
-        this.drawRadioButton("Show only dog parks ", "dogs", divSort);
-        this.drawRadioButton("Show parks recommended for kids ","kids", divSort);
-
-        let button = document.createElement("button");
-        button.className = "button";
-        button.type = "submit";
-        button.innerHTML = "Sort";
-        button.appendChild(button);
-        button.onclick = ev => {
-            let par = document.querySelectorAll(".RadioButton");
-
-
-            par.forEach(el => {
-
-                if(el.checked == true && value =="name")
-                {
-                    this.sortByName();
-                    console.log("Sort name");
-                }
-                else if(el.checked == true && value =="green")
-                {
-                    this.sortByGreen();
-                }
-                else if(el.checked == true && value =="dogs")
-                {
-                    this.sortByDogs();
-                }
-                else if(el.checked == true && value =="kids")
-                {
-                    this.sortByKids();
-                }
-                    
+            if (name != "" && location !="" && 25 < area && area <= 100)
+            {  
+                console.log(this.id);
                 
-            });
+                fetch("https://localhost:5001/ParkInventory/AddPark/" + this.id, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "name": name,
+                        "location": location,
+                        "greenArea": area
+                    })
+                }).then(p => {
+                        console.log(p.ok);
+                        if (p.ok){
+                        
+                            console.log();
+                            p.text().then(q => {
+                                console.log(q);
+                                let park = new Park(q,name,location,area);
+                                
+                                if (inputDogFriendly.checked){
+                                   // park.addItem(new InventoryItem(1,"dogpark",1));
+                                    park.addItemInDB("dogPark",1,"This is a dogpark.");
+                                }
+                                
+                                if (inputKidsFriendly.checked){
+                                    //park.addItem(new InventoryItem(1,"playground",1));
+                                    park.addItemInDB("Playground",1,"This is a playground.");
+
+                                }
+                                this.addPark(park);
+                            });
+                        }
+                        else if(p.status == 406){
+                            alert("Input all informations.");
+                        }
+                        else {
+                            alert("Error - another type of error.");
+                        }
+                }).catch (p => {
+                    alert("Error");
+                }); 
+            }
+
+            else
+            alert("Invalid input. Please try again. ");
+        }
+
+        let btnDelete = createEl("btnDel","button","Delete Park", buttons);
+        btnDelete.onclick = ev =>{
+            
+            let name = inputName.value;
+            let location = inputLocation.value;
+            console.log(name);
+            console.log(location);
+            let ind = this.parkList.findIndex(i => i.name === name && i.location === location);
+            if (ind === -1)
+                alert ("Error: Data for the park isn't valid. ")
+            else
+            {
+                console.log("Usao!");
+                console.log(this.parkList[ind]);
+                fetch("https://localhost:5001/ParkInventory/DeletePark/" + this.parkList[ind].id, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                    })
+                }).then(p => {
+                        if (p.ok){
+                            this.containerParks.removeChild(this.parkList[ind].container);
+                            remove(name, this.parkList);
+                        }
+
+                        else {
+                            alert("Error - another type of error.");
+                        }
+                }).catch (p => {
+                    alert("Error");
+                }); 
+            }
         }
     }
 
-    */
+    drawCity(host){
+        
+        this.container = createEl("divCity","div","",host);
+        createEl("hCity","h2",this.name, this.container);
+        createEl("hDate", "h5","Creation date: " + this.date,this.container);
 
-    draw(host)
-    {
-        //main div
-        let divCity = document.createElement("div");
-        divCity.className = "divCity";
-        this.container = divCity;
-        host.appendChild(divCity);
+        let btnEdit = createEl("btnEdit","button","Edit Parks",this.container);
+        btnEdit.onclick = ev =>{
+            let div = this.container.querySelector(".divMenu");
 
-        //heading 
-        let h = document.createElement("h1");
-        h.className = "heading";
-        h.innerHTML = "Grad " + this.name + " " + this.year; 
-        divCity.appendChild(h);
+            if (div.style.display === "none")
+            {
+                div.style.display = "flex";
+            }
+            else
+            {
+                div.style.display = "none";
+            }
 
-        //content of the div
-        let divContent = document.createElement("div");
-        divContent.className = "divContent";
-        divContent.innerHTML = " div Content"
-        divCity.appendChild(divContent);
+        }
 
-        //search = show only dog friendly parks
+        this.drawMenu(this.container);
 
-        //search = show only kids friendly parks
+        this.containerParks = createEl("divParks","div","", this.container);
+        this.parkList.forEach(park => {
+            park.drawPark(this.containerParks);
+        });
 
-
-        //menu
-        this.drawMenu(divContent);
-
-        //sort
-        //this.drawSort(divContent);
-
-        //park
-        this.drawParks(divContent);
 
 
     }
-}
 
+}

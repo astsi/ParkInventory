@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Backend.Models
 {
@@ -14,11 +15,11 @@ namespace Backend.Models
         [Column("Name")]
         public string name { get; set; }
 
-        [Column("Amount")]
-        public int amount { get; set; }
+        [Column("Num")]
+        public int num { get; set; }
 
-        [Column("Image")]
-        public string image {get; set; }
+        [Column("Description")] //izmena
+        public string description {get; set; }
         
         [JsonIgnore]
         [Column("Park")]

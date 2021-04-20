@@ -1,273 +1,231 @@
+import { add, createEl, isInList, remove } from "./helperFunctions.js";
 import {InventoryItem} from "./inventoryItem.js"
 export class Park{
 
-    inventoryItems = ['bin','lamp','bench','dogpark','playground']; 
+    inventoryItems = ['bin','lamp','bench','dogpark','playground','fountain']; 
 
-    constructor(id, namePark, sqMeters, greenArea)
-    {
+    constructor(id, name, location, greenArea){
+
         this.id = id;
-        this.namePark = namePark;
-        this.sqMeters = sqMeters;
+        this.name = name;
+        this.location = location;
         this.greenArea = greenArea;
         this.inventoryList = [];
+
         this.container = null;
         this.containerInventory = null;
     }
 
-    greenPercentage()
-    {
-        if (this.sqMeters < this.greenArea)
-        return 0;
-        else return Math.round(this.greenArea / this.sqMeters * 100);
-    }
-
-    isDogFriendly()
-    {
+    isDogFriendly(){
         let result = this.inventoryList.some(el => el.name === "dogpark");
-        if (result) return true;
-        else return false;
-
+        return result;
     }
-    
-    isKidsFriendly()
-    {
+
+    isKidsFriendly(){
         let result = this.inventoryList.some(el => el.name === "playground");
-        if (result) return true;
-        else return false;
-        
+        return result;
     }
 
-    isInList(name)
-    {
-        let result = this.inventoryItems.some(el => el.name === name);
-        console.log("Value of Inventory is: " + (result)? "true" : "false");
+    addItem(item){
+        let ind = this.inventoryList.findIndex(i => i.name === item.name);
+        if (ind === -1){
 
-        if (result) return true;
-        else return false;
+            add(item,this.inventoryList);
+        }
+        else{
+            this.inventoryList[ind].num += item.num;
+        }
+
+        console.log(this.inventoryList);
     }
 
-    retIndex(name)
-    {
-        for (let i=0; i< this.inventoryList.length; i++)
-        {
-            if (this.inventoryList[i].name == name)
+    drawGreenArea(host){
+
+        if(this.greenArea < 0 || this.greenArea > 100){
+            alert("The green area percentage must be a value between 0 and 100.");
+        }
+        else{
+            let wrap = createEl("wrap","div","",host);
+            let gArea = createEl("greenArea","div","",wrap);
+            createEl("labGreen","label","Green Area: " + this.greenArea + "%", gArea);
+            gArea.style.width = this.greenArea + "%";
+
+        }
+    }
+
+    addItemInDB(name,num,desc){
+
+        console.log(this.id);
+
+    fetch("https://localhost:5001/ParkInventory/AddInventory/" + this.id, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": name,
+                "num": num,
+                "description": desc
+            })
+        }).then(p => {
+                if (p.ok){
+                
+                    console.log("post");
+                    p.text().then(q => {
+                        let item = new InventoryItem(q,name,num,desc);
+                        add(item,this.inventoryList);
+                        item.drawItem(this.containerInventory);
+                    });
+                }
+                else if(p.status == 406){
+                    alert("Input all informations.");
+                }
+                else {
+                    alert("Error - another type of error.");
+                }
+        }).catch (p => {
+            alert("Error");
+    }); 
+        // let item = new InventoryItem(q,name,num,desc);
+        // add(item,this.inventoryList);
+        // item.drawItem(this.containerInventory);
+    }
+
+    MenuItem(host){
+        let menu = createEl("menu", "div","",host);
+        menu.style.display = "none";
+        createEl("hEdit","h4","Edit Inventory:",menu);
+        createEl("labInvName", "label","Item Name: ", menu);
+        let inputName = createEl("inName", "input","",menu);
+        createEl("labInvNum", "label","Number of items: ", menu);
+        let inputNum = createEl("inNum", "input","",menu);
+        inputNum.type = "number";
+
+        let buttons = createEl("buttonsItem","div","",menu);
+
+        let btnAdd = createEl("btnAddItem","button","Add Item",buttons);
+        btnAdd.onclick = ev => {
+            let name = inputName.value;
+            let num = inputNum.value;
+
+            if (!isInList(name,this.inventoryList))
             {
-                console.log("Ret Index ind: " + i);
-                return i;
-            }
-        }
-        return -1;
-    }
+                if (name != "" && num > 0){
 
-    addItem(item)
-    {
-        let ind = this.retIndex(item.name);
-        console.log("index: " + ind);
-        if (ind < 0)
-            this.inventoryList.push(item);
-        
-        console.log("Item posle dodavanja: " + this.inventoryList[0]);
-    }
+                    let desc = "Universal description";
+                    this.addItemInDB(name,num,desc);
+                }
 
-    removeItem(name)
-    {
-        let ind = this.retIndex(name);
-        if (ind > -1)
-        {
-            this.inventoryList.splice(ind,1);
-        }
-    }
-
-    updateItem(item)
-    { console.log("Usao u updateItem");
-        if (item.amount > 0)
-        { console.log("Usao u prvi if");
-            let ind = this.retIndex(item.name);
-            if (ind > -1)
-            {console.log("Usao u 2. if");
-                this.inventoryList[ind].amount = parseInt(item.amount);
+                else
+                    alert("The entered data is not valid.");
+            
             }
             else
-            {console.log("Usao u else");
-                this.addItem(item);
-    
+            {
+                alert("This item is already in the list. Try to update.")
+            }
+        }
+        
+        let btnUpdate = createEl("btnUpdate","button", "Update Item", buttons);
+        btnUpdate.onclick = ev => {
+            console.log(this.inventoryList);
+            console.log("Input name: " + inputName.value);
+            console.log("input num: "+ inputNum.value);
+            if (isInList(inputName.value, this.inventoryList) && inputNum.value > 0){
+                
+                let ind = this.inventoryList.findIndex(i => i.name ===  inputName.value);
+                console.log(ind);
+                this.inventoryList[ind].num = inputNum.value;
+                console.log(this.inventoryList[ind]);
+
+                fetch("https://localhost:5001/ParkInventory/UpdateInventory", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify ({
+                        "id": this.inventoryList[ind].id,
+                        "name": this.inventoryList[ind].name,
+                        "num": this.inventoryList[ind].num,
+                        "description": this.inventoryList[ind].description
+                    })
+                }).then(p => {
+                    if (p.ok){
+
+                        this.inventoryList[ind].refreshItem();
+                    }
+                    else{
+                        alert("Error - another type of error.");
+                    }
+                });
+            }
+            else{
+                alert("This item cannot be updated.");
             }
         }
 
-    }
+        let btnDelete = createEl("btnDelete","button","Delete Item", buttons);
+        btnDelete.onclick = ev =>{
+            let name = inputName.value;
+            let ind = this.inventoryList.findIndex(i => i.name === name);
+            if (ind === -1)
 
-    drawExtras(host)
-    {
-        let divExtras = document.createElement("div");
-        divExtras.className = "divExtras";
-        divExtras.innerHTML = "divExtras ";
-        host.appendChild(divExtras);
+                alert ("Error: Data for the park isn't valid. ")
+            else
+            {
+                fetch("https://localhost:5001/ParkInventory/DeleteInventoryItem/" + this.inventoryList[ind].id, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                    })
+                }).then(p => {
+                        if (p.ok){
 
-        if (this.isKidsFriendly())
-        {
-            let labKids = document.createElement("label");
-            labKids.innerHTML = "This park contains entertainment for the children.\n ";
-            divExtras.appendChild(labKids);
+                            this.containerInventory.removeChild(this.inventoryList[ind].container);
+                            remove(name, this.inventoryList);
+                        }
+                        else {
+                            alert("Error - another type of error.");
+                        }
+                }).catch (p => {
+                    alert("Error");
+                }); 
+            }
         }
-        if (this.isDogFriendly())
-        {
-            let labDogs = document.createElement("label");
-            labDogs.innerHTML = "Dog Friendly park!";
-            divExtras.appendChild(labDogs);
-
-        }
-
-        // if child/dog - friendly create label that says so
-    }
-
-    drawAreaBar(host){
-
-        let divBar = document.createElement("dl");
-        divBar.className = "dl";
-        host.appendChild(divBar);
-
-        let dt = document.createElement("dt");
-        divBar.className = "dt";
-        dt.innerHTML = "Green area";
-        divBar.appendChild(dt);
-
-        let dd = document.createElement("dd");
-        dd.class = "percentage";
-        dd.style.width = this.greenPercentage();
-        dt.appendChild(dd);
-
-        let span = document.createElement("span");
-        span.className = "text";
-        span.innerHTML = this.greenPercentage() + "% : ";
-        dd.appendChild(span);
-
-    }
-
-    drawParkInventory(host){
-        let inventory = document.createElement("div");
-        inventory.className = "divInventories";
-        inventory.innerHTML = "Inventory list";
-        this.containerInventory = inventory;
-        host.appendChild(inventory);
-
-        //console.log("Length: " + this.inventoryList.length);
-        this.inventoryList.forEach(item => {
-            item.drawItem(inventory);
-        });
-    }
-
-    drawBlock(description, name, host)
-    {
-        let div = document.createElement("div");
-        div.className = "divBlock";
-        host.appendChild(div);
-
-        let lab = document.createElement("lab");
-        lab.className = "lab";
-        lab.innerHTML = description + ": ";
-        div.appendChild(lab);
-
-        let input = document.createElement("input");
-        if (!name.includes("name"))
-        input.type = "number";
-        input.value = name;
-        input.className = name;
-        div.appendChild(input);
-        
-    }
-
-    drawMenu(host){
-
-        console.log("DrawMenu host: " + host);
-        console.log(host);
-        let divMenu = document.createElement("div");
-        divMenu.className = "divMenuItem";
-        divMenu.innerHTML = "div Menu";
-        host.appendChild(divMenu);
-
-        let divSelect = document.createElement("div");
-        divSelect.className = "divSelectItem";
-        divSelect.innerHTML = "divSelect";
-        divMenu.appendChild(divSelect);
-
-        let nameLab = document.createElement("lab");
-        nameLab.className = "lab";
-        nameLab.innerHTML = "Select the item: ";
-        divSelect.appendChild(nameLab);
-
-        let nameIt = document.createElement("select");
-        nameIt.className = "nameItem";
-        divSelect.appendChild(nameIt);
-
-        this.inventoryItems.forEach(element =>{
-            let option = document.createElement("option");
-            option.className = "option";
-            option.innerHTML = element;
-            option.value = element;
-            nameIt.appendChild(option);
-        });
-        
-        this.drawBlock("Amount", "countItem", divMenu);
-
-        let buttonUpdate = document.createElement("button");
-        buttonUpdate.className = "button";
-        buttonUpdate.innerHTML = "Update Inventory";
-        divMenu.appendChild(buttonUpdate);
-        buttonUpdate.onclick = ev =>{
-            //const name = document.querySelector(".nameItem").value;
-            const amount = host.querySelector(".countItem").value;
-            const name = nameIt.value;
-            console.log("Item name and amount: " + name + " " + amount);
-
-            let item = new InventoryItem(name, amount);
-            this.updateItem(item);
-            
-            let child = host.querySelector(".divInventories");
-            let child2 = host.querySelector(".divMenuItem");
-            let extras = this.container.querySelector(".divExtras");
-
-            this.container.removeChild(extras);
-            this.drawExtras(this.container);
-
-            host.removeChild(child);
-            this.drawParkInventory(host);
-
-            host.removeChild(child2);
-            this.drawMenu(host);
-        }
-
     }
 
     drawPark(host){
 
-        let divPark = document.createElement("div");
-        divPark.className = "divPark";
-        divPark.innerHTML = "div Park";
-        this.container = divPark;
-        host.appendChild(divPark);
+        this.container = createEl("divPark","div","",host);
+        createEl("pParkInfo","h3", this.name, this.container);
+        createEl("pParkInfo","h5","Location: " + this.location, this.container);
+        
+        this.drawGreenArea(this.container);
+        let hInventory = createEl("parksInventory", "h4","Park's inventory:", this.container);
+        this.containerInventory = createEl("divInventory", "div","", this.container);
+        let br = document.createElement("br");
+        this.containerInventory.appendChild(br);
+        this.inventoryList.forEach(item => {
+            item.drawItem(this.containerInventory);
+        });
 
-        //park Name
-        let h = document.createElement("h2");
-        h.className = "header2";
-        h.innerHTML = this.namePark;
-        divPark.appendChild(h);
+        let btnEdit = createEl("btnEdit","button","Edit Inventory",this.container);
+        btnEdit.onclick = ev => {
+            let div = this.container.querySelector(".menu");
 
-        //extras (is dog friendly is kidsfriendly)
-        this.drawExtras(divPark);
+            if (div.style.display === "none")
+            {
+                div.style.display = "flex";
+            }
+            else 
+            {
+                div.style.display = "none";
+            }
+        }
+        this.MenuItem(this.container);
 
-        //green area bar
-        this.drawAreaBar(divPark);
-
-        //Inventory Content
-        let divContent = document.createElement("div");
-        divContent.className = "divContent";
-        divContent.innerHTML = "div Content - Park";
-        divPark.appendChild(divContent);
-
-        //park inventory
-        this.drawParkInventory(divContent);
-
-        //edit menu
-        this.drawMenu(divContent);
     }
+
 }

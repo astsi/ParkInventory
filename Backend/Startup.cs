@@ -36,7 +36,10 @@ namespace Backend
                             .AllowAnyMethod()
                             .WithOrigins(new string[]
                             {
-                                "http://127.0.0.1:5503"
+                                "http://127.0.0.1:5503",
+                                "http://127.0.0.1:5501",
+                                "http://127.0.0.1:5500",
+                                "http://127.0.0.1:5502"
                             })
                 );
             });
@@ -48,7 +51,7 @@ namespace Backend
 
             services.AddDbContext<ParkInventoryContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("InventoryCS"));
+                options.UseSqlServer(Configuration.GetConnectionString("IItemCS"));
             });
         }
 

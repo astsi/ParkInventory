@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,13 +13,16 @@ namespace Backend.Models
         public int id { get; set; }
 
         [Column("Name")]
-        [MaxLength(255)]
+        [MaxLength(50)]
         public string name { get; set; }
 
-        [Column("Year")]
-        public int year { get; set; }
+        [Column("Date")]
+        public string date { get; set; }
 
         public virtual List<Park> parkList {get; set;}
+
+
+         //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
 
     }
 }

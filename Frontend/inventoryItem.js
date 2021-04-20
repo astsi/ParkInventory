@@ -1,45 +1,36 @@
+import { createEl } from "./helperFunctions.js";
+
 export class InventoryItem{
 
-    constructor(id, name, amount, img)
-    {
+    constructor(id, name, num, desc){
         this.id = id;
         this.name = name;
-        this.amount = amount;
-        this.img = img;
-
-        if (amount < 0 || amount === "undefined" || amount === null)
-            amount = 1;
-        //this.container = null;
+        this.num = num;
+        this.description = desc;
+        
+        this.container = null;
     }
 
-    drawImage(host)
-    {
-       
+    refreshItem(){
+        let content = this.container.querySelector(".pItem");
+        this.container.removeChild(content);
+        this.drawContent(this.container);
     }
 
-    drawLabel(host)
-    {
-        let label = document.createElement("label");
-        label.className = "labelItem";
-        label.innerHTML = this.name + " x " + this.amount;
-        host.appendChild(label);
+    drawContent(host){
+        createEl("pItem","p", this.name + " x " + this.num, this.container);
     }
 
     drawItem(host){
-
-        //Item container
-        let divInv = document.createElement("div");
-        divInv.className = "divItem";
-        //divInv.innerHTML = "div Item";
-
-        console.log(host);
-        host.appendChild(divInv);
-
-        //itemImage
-        this.drawImage(divInv);
-
-        //item description
-        this.drawLabel(divInv);
-
+        this.container = createEl("divItem","div","",host);
+        this.drawContent(this.container);
+        
+        // let btnUpdate = createEl("btnUpdateItem","button", "Update Item", host);
+        // let btnDelete = createEl("btnDeleteItem","button","Delete Item", host);
+        // btnDelete.onclick = ev => {
+        //     let content = this.container.querySelector(".pItem");
+        //     this.container.removeChild(content);
+        //     this.drawContent()
+        //}
     }
 }
