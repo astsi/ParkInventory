@@ -20,7 +20,6 @@ export class City {
 
     addPark(park){
 
-        console.log(this.parkList);
         if (!isInList(park.name,this.parkList)){
             add(park,this.parkList);
             park.drawPark(this.containerParks);
@@ -59,9 +58,7 @@ export class City {
             let area = inputGreenArea.value;
 
             if (name != "" && location !="" && 25 < area && area <= 100)
-            {  
-                console.log(this.id);
-                
+            {              
                 fetch("https://localhost:5001/ParkInventory/AddPark/" + this.id, {
                     method: "POST",
                     headers: {
@@ -73,12 +70,8 @@ export class City {
                         "greenArea": area
                     })
                 }).then(p => {
-                        console.log(p.ok);
                         if (p.ok){
-                        
-                            console.log();
                             p.text().then(q => {
-                                console.log(q);
                                 let park = new Park(q,name,location,area);
                                 
                                 if (inputDogFriendly.checked){
@@ -114,15 +107,11 @@ export class City {
             
             let name = inputName.value;
             let location = inputLocation.value;
-            console.log(name);
-            console.log(location);
             let ind = this.parkList.findIndex(i => i.name === name && i.location === location);
             if (ind === -1)
                 alert ("Error: Data for the park isn't valid. ")
             else
             {
-                console.log("Usao!");
-                console.log(this.parkList[ind]);
                 fetch("https://localhost:5001/ParkInventory/DeletePark/" + this.parkList[ind].id, {
                     method: "DELETE",
                     headers: {

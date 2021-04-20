@@ -36,7 +36,6 @@ export class Park{
             this.inventoryList[ind].num += item.num;
         }
 
-        console.log(this.inventoryList);
     }
 
     drawGreenArea(host){
@@ -55,8 +54,6 @@ export class Park{
 
     addItemInDB(name,num,desc){
 
-        console.log(this.id);
-
     fetch("https://localhost:5001/ParkInventory/AddInventory/" + this.id, {
             method: "POST",
             headers: {
@@ -69,8 +66,6 @@ export class Park{
             })
         }).then(p => {
                 if (p.ok){
-                
-                    console.log("post");
                     p.text().then(q => {
                         let item = new InventoryItem(q,name,num,desc);
                         add(item,this.inventoryList);
@@ -128,15 +123,10 @@ export class Park{
         
         let btnUpdate = createEl("btnUpdate","button", "Update Item", buttons);
         btnUpdate.onclick = ev => {
-            console.log(this.inventoryList);
-            console.log("Input name: " + inputName.value);
-            console.log("input num: "+ inputNum.value);
             if (isInList(inputName.value, this.inventoryList) && inputNum.value > 0){
                 
                 let ind = this.inventoryList.findIndex(i => i.name ===  inputName.value);
-                console.log(ind);
                 this.inventoryList[ind].num = inputNum.value;
-                console.log(this.inventoryList[ind]);
 
                 fetch("https://localhost:5001/ParkInventory/UpdateInventory", {
                     method: "PUT",

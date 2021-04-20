@@ -90,8 +90,6 @@ export class Container{
             let name = nameIn.value;
             if (name != "" && !isInList(name,this.cityList))
             {
-                console.log(this.cityList);
-                console.log(this.cityList);
                 let dat = this.returnDate();
 
                 fetch("https://localhost:5001/ParkInventory/AddCity", 
@@ -108,8 +106,6 @@ export class Container{
                 }).then(p => 
                     {
                         if(p.ok){
-                            console.log("post");
-                            //console.log(p.text());
                             p.text().then(q => {
                                 let city = new City(q, name, dat);
                                 this.cityList.push(city);
